@@ -1,0 +1,8 @@
+{
+    "experimentalInteractiveRunEvents":true,
+    "env":{"v8_coverage":
+    {
+        "src_root":".",
+        "include":["./app.js","./happy_number.js"]
+        }}
+}
