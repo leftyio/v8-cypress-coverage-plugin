@@ -35,31 +35,40 @@ On coverage collection we will replace the url root with the supplied `src_root`
 
 Both thoses settings are required as they are used to recognize which files are to be kept amongst all the browser loaded files.
 
-### Test Files:
-**required**
-
-In each test file, add the following task so that the coverage tool can be activated:
-
-```javascript
-beforeEach(() => {
-  cy.task('beforeTest')
-})
-
-afterEach(() => {
-  cy.task('afterTest')
-})
+`support/index.js`
+```js
+[...]
+import "cypress_v8_coverage_plugin/support"
+[...]
 ```
-### File Sanitation
-**required**
 
-On 
+This allows the plugin to hook on test lifecyle events
+
+`plugins/indes.js`
+```js
+const cypress_v8_plugin = require("cypress_v8_coverage_plugin/plugin")
+module.exports = (on, config) => {
+    ...
+    config = cypress_v8_plugin(on,config)
+    ...
+    return config
+}
+
+```
+
+This registers the plugin in to cypress
+
+
 ### Convertion
 _optional_
 You can trigger a report convertion to the `html` or `lcov` through the `convert_coverage` task
+
+This run the nyc command through npx on the generated files.
+
 ```javascript
 afterAll(()=>{
-    cy.task("convert_coverage",'html',"./html/report/dir")//use an empty dir, this generates a lot of files
-    cy.task("convert_coverage","lcov","./lcovpath.info")
+    cy.task("convertCoverage",'html',"./html/report/dir")//use an empty dir, this generates a lot of files
+    cy.task("convertCoverage","lcov","./lcovpath.info")
 })
 ```
 Otherwise, you can trigger this convertion manualy using nyc or istanbul

@@ -16,7 +16,7 @@ const config ={
   include_globs:["*"]
 }
 
-function beforeTest() {
+function v8BeforeTest() {
   if (cdp) {
     const callCount = true;
     const detailed = true;
@@ -28,7 +28,7 @@ function beforeTest() {
 
   return null;
 }
-function afterTest() {
+function v8AfterTest() {
   if (cdp) {
     return cdp.Profiler.takePreciseCoverage().then(handleRawC8Coverage);
   }
@@ -49,26 +49,35 @@ function handleRawC8Coverage(c8coverage) {
 
   // The following logic is taken from the current cypress coverage plugin
   // We load previous coverage file if it exists
+  const filename = path.join(istanbulCoverageFolder, "v8_out.json");
+  const previousCoverage = fs.existsSync(filename)
+    ? JSON.parse(fs.readFileSync(filename, "utf8"))
+    : [];
+    previousCoverage.push(appC8coverages)
+  // We merge and write
+    fs.writeFileSync(filename, JSON.stringify(previousCoverage, null, 2), "utf8");
+    return cdp.Profiler.stopPreciseCoverage();
+  
+}
+function v8CollectCoverage(){
   const filename = path.join(istanbulCoverageFolder, "out.json");
   const previousCoverage = fs.existsSync(filename)
     ? JSON.parse(fs.readFileSync(filename, "utf8"))
     : {};
-  const coverageMap = istanbul.createCoverageMap(previousCoverage);
-  // We merge and write
-  return Promise.all(
-    appC8coverages.map((file) => {
-      return convertToIstanbul(url_to_path(file.url), file.functions).then(
-        (istanbulCoverage) => {
-          coverageMap.merge(istanbulCoverage);
-        }
-      );
-    })
-  ).then(() => {
-    fs.writeFileSync(filename, JSON.stringify(coverageMap, null, 2), "utf8");
-    return cdp.Profiler.stopPreciseCoverage();
-  });
+    const coverageMap = istanbul.createCoverageMap(previousCoverage);
+  const v8path = path.join(istanbulCoverageFolder, "v8_out.json");
+  const v8_coverage  = JSON.parse(fs.readFileSync(v8path));
+  return Promise.all(v8_coverage.map(files =>Promise.all(files.map(file => convertToIstanbul(url_to_path(file.url), file.functions).then(
+    (istanbulCoverage) => {
+      coverageMap.merge(istanbulCoverage);
+    }
+  ))))).then(()=>{
+    fs.writeFileSync(filename,JSON.stringify(coverageMap,null,2),"utf8")
+    fs.unlinkSync(v8path)
+    return null;
+  })
+    
 }
-
 function log(msg) {
     // todo: put in place a correct way to log things
   //console.log(msg);
@@ -86,8 +95,8 @@ const makeFolder = () => {
   }
 };
 
-const convertToIstanbul = async (jsFilename, functionsC8coverage) => {
-  const map=undefined
+const convertToIstanbul = async (jsFilename, functionsC8coverage ) => {
+  let map=undefined
   if(fs.existsSync(`${jsFilename}.map`))
   {
     map = JSON.parse(fs.readFileSync(`${jsFilename}.map`));
@@ -143,7 +152,7 @@ function browserLaunchHandler(browser, launchOptions) {
   tryConnect();
 }
 
-function convert_report([format,location]){
+function v8ConvertCoverage([format,location]){
     format = format??"html"
     location = location??"./coverage"
     console.log("executing " ,"npx nyc report "+`--reporter=${format} --report-dir=${location}`)
@@ -155,11 +164,15 @@ function register(on, cypress_config) {
   config.src_root=cypress_config.env.v8_coverage.src_root
   config.include_globs = cypress_config.env.v8_coverage.include
   on("before:browser:launch", browserLaunchHandler);
-  on("task", {
-    beforeTest,
-    afterTest,
-    convert_report
-  });
+    on("task", {
+    v8BeforeTest,
+    v8AfterTest,
+    v8ConvertCoverage,
+    v8CollectCoverage,
+  })    
+  cypress_config.env.V8CodeCoverageRegistered=true
+  return cypress_config
+  
 }
 
 module.exports = register;

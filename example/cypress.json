@@ -3,6 +3,7 @@
     "env":{"v8_coverage":
     {
         "src_root":".",
-        "include":["./app.js","./happy_number.js"]
+        "include":["./app.js","./happy_number.js"],
+        "use_coverage_hooks":true
         }}
 }

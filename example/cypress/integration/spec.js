@@ -1,11 +1,11 @@
 /// <reference types="cypress" />
 
 beforeEach(() => {
-  cy.task('beforeTest')
+ // cy.task('beforeTest')
 })
 
 afterEach(() => {
-  cy.task('afterTest')
+  //cy.task('afterTest')
 })
 
 it('adds numbers', () => {
@@ -20,5 +20,6 @@ it('Substracts numbers',()=>{
 })
 
 after(()=>{
-cy.task("convert_report",["lcov","./lcov"])
+  //cy.task("collectCoverage")
+cy.task("v8ConvertCoverage",["lcov","./lcov"])
 })
