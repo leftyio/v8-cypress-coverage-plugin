@@ -163,6 +163,8 @@ function v8ConvertCoverage([format,location]){
 function register(on, cypress_config) {
   config.src_root=cypress_config.env.v8_coverage.src_root
   config.include_globs = cypress_config.env.v8_coverage.include
+  if (!cypress_config.env.v8_coverage.collect_coverage_timeout)
+  {cypress_config.env.v8_coverage.collect_coverage_timeout = 60000;}
   on("before:browser:launch", browserLaunchHandler);
     on("task", {
     v8BeforeTest,

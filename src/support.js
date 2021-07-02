@@ -28,7 +28,7 @@ const registerHooks = () => {
     })
   
     after(()=>{
-        cy.task("v8CollectCoverage")
+        cy.task("v8CollectCoverage",options={timeout:Cypress.env('v8_coverage').collect_coverage_timeout})
     })
   }
   const cyEnvs = Cypress._.mapKeys(Cypress.env(), (value, key) =>

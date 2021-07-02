@@ -26,7 +26,8 @@ This plugins **doesn't**
         "env":{
             "v8_coverage":{
                 "include":["glob/**/to/your/files.*js","other/glob"],
-                "src_root":"path/to/your/src/root"
+                "src_root":"path/to/your/src/root",
+                "collect_coverage_timeout":120000 //optional, this affects the final code collection step, that may timeout if your codebase is big enough
             }
         }
     }
