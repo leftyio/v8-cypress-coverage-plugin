@@ -1,22 +1,6 @@
 const registerHooks = () => {
     before(() => {
-      /*
-      const logInstance = Cypress.log({
-        name: 'V8Coverage',
-        message: ['Reseting [v8_code_coverage_plugin]']
-      })
-  
-      cy.task(
-        'resetCoverage',
-        {
-          // @ts-ignore
-          isInteractive: Cypress.config('isInteractive')
-        },
-        { log: false }
-      ).then(() => {
-        logInstance.end()
-      })
-      */
+    cy.task("v8CleanFiles")      
     })
   
     beforeEach(() => {
@@ -28,7 +12,7 @@ const registerHooks = () => {
     })
   
     after(()=>{
-        cy.task("v8CollectCoverage",options={timeout:Cypress.env('v8_coverage').collect_coverage_timeout})
+        cy.task("v8CollectCoverage",null,{timeout:Cypress.env('v8_coverage').collect_coverage_timeout})
     })
   }
   const cyEnvs = Cypress._.mapKeys(Cypress.env(), (value, key) =>

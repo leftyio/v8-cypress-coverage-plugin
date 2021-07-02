@@ -160,6 +160,14 @@ function v8ConvertCoverage([format,location]){
     return null;
 }
 
+function v8CleanFiles(){
+  const v8outfiles = path.join(istanbulCoverageFolder, "v8_out.json")
+  if(fs.existsSync(v8outfiles)){
+    fs.unlinkSync(v8outfiles)
+  }
+  return null;
+}
+
 function register(on, cypress_config) {
   config.src_root=cypress_config.env.v8_coverage.src_root
   config.include_globs = cypress_config.env.v8_coverage.include
@@ -171,6 +179,7 @@ function register(on, cypress_config) {
     v8AfterTest,
     v8ConvertCoverage,
     v8CollectCoverage,
+    v8CleanFiles,
   })    
   cypress_config.env.V8CodeCoverageRegistered=true
   return cypress_config
