@@ -2,7 +2,7 @@
 
 _this plugin aims at providing codecoverage using the chrome V8 coverage api_
 
-It is adapted from (this poc)[https://github.com/bahmutov/cypress-native-chrome-code-coverage-example] 
+It is adapted from [this poc](https://github.com/bahmutov/cypress-native-chrome-code-coverage-example)
 
 ## Abilities and limitation
 
