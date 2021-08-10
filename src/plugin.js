@@ -94,13 +94,21 @@ const makeFolder = () => {
     mkdirp.sync(istanbulCoverageFolder);
   }
 };
-
+const file_cache = new Map()
+const cachedReadFileSync= (file,...args)=>{
+  console.log("reading cache",file)
+  if (!file_cache.has(file)){
+    console.log("not cached ",file)
+    file_cache.set(file,fs.readFileSync(file,...args))
+  }
+  return file_cache.get(file)
+}
 const convertToIstanbul = async (jsFilename, functionsC8coverage ) => {
   let map=undefined
   if(fs.existsSync(`${jsFilename}.map`))
   {
-    map = JSON.parse(fs.readFileSync(`${jsFilename}.map`));
-    map.sourcesContent = map.sources.filter(fs.existsSync).map((f) =>fs.readFileSync(f, "utf-8"));
+    map = JSON.parse(cachedReadFileSync(`${jsFilename}.map`));
+    map.sourcesContent = map.sources.filter(fs.existsSync).map((f) =>cachedReadFileSync(f, "utf-8"));
   }
   const sourceMapConfig = (map==undefined || map.sourcesContent.length==0)?undefined:{sourceMap:{sourcemap:map}}
   const converter = v8ToIstanbul(jsFilename,undefined,sourceMapConfig);
@@ -109,8 +117,9 @@ const convertToIstanbul = async (jsFilename, functionsC8coverage ) => {
 
   // const c8coverage = require('./.v8-coverage/coverage.json')
   // const appCoverage = c8coverage.result[0].functions
+  console.log("applying coverage ", jsFilename)
   converter.applyCoverage(functionsC8coverage);
-
+  console.log("applyied coverage",jsFilename)
   // output coverage information in a form that can
   // be consumed by Istanbul.
   // console.info(JSON.stringify(converter.toIstanbul(), null, 2))
@@ -169,8 +178,7 @@ function v8CleanFiles(){
 }
 
 function register(on, cypress_config) {
-  config.src_root=cypress_config.env.v8_coverage.src_root
-  config.include_globs = cypress_config.env.v8_coverage.include
+  load_config(cypress_config);
   if (!cypress_config.env.v8_coverage.collect_coverage_timeout)
   {cypress_config.env.v8_coverage.collect_coverage_timeout = 60000;}
   on("before:browser:launch", browserLaunchHandler);
@@ -182,8 +190,16 @@ function register(on, cypress_config) {
     v8CleanFiles,
   })    
   cypress_config.env.V8CodeCoverageRegistered=true
+  cypress_config.env.V8CodeCoverageCollect=!cypress_config.env.v8_coverage.skip_coverage_collection
   return cypress_config
   
 }
+function load_config(cypress_config) {
+  config.src_root = cypress_config.env.v8_coverage.src_root;
+  config.include_globs = cypress_config.env.v8_coverage.include;
+}
 
 module.exports = register;
+module.exports.load_config = load_config;
+module.exports.collect_coverage = v8CollectCoverage
+

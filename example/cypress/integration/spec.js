@@ -1,12 +1,3 @@
-/// <reference types="cypress" />
-
-beforeEach(() => {
- // cy.task('beforeTest')
-})
-
-afterEach(() => {
-  //cy.task('afterTest')
-})
 
 it('adds numbers', () => {
   cy.visit('/')
@@ -19,7 +10,3 @@ it('Substracts numbers',()=>{
   cy.contains('Hello world').should('be.visible')
 })
 
-after(()=>{
-  //cy.task("collectCoverage")
-cy.task("v8ConvertCoverage",["lcov","./lcov"])
-})

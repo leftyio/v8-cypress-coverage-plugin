@@ -59,7 +59,23 @@ module.exports = (on, config) => {
 
 This registers the plugin in to cypress
 
+### Optional Collect
+_optional_
 
+At the end of each spec a collection spec occurs, gathering coverage data from the spec's tests. This can be a lengthy process, to reduce the run cost, you can add the `skip_coverage_collection` option :
+```json
+    {...
+        "env":{
+            "v8_coverage":{
+                ...,
+                skip_coverage_collection:true
+                ...
+            }
+        }
+    }
+```
+
+And run independently the `src/scripts/collectCoverage.js` script to collect coverage and convert it to istanbul, while applying the sourcemap
 ### Convertion
 _optional_
 You can trigger a report convertion to the `html` or `lcov` through the `convert_coverage` task

@@ -1,9 +1,10 @@
 {
-    "experimentalInteractiveRunEvents":true,
-    "env":{"v8_coverage":
-    {
-        "src_root":".",
-        "include":["./app.js","./happy_number.js"],
-        "use_coverage_hooks":true
-        }}
+  "experimentalInteractiveRunEvents": true,
+  "env": {
+    "v8_coverage": {
+      "src_root": ".",
+      "include": ["./app.js", "./happy_number.js", "./**/fly.js"],
+      "skip_coverage_collection": true
+    }
+  }
 }

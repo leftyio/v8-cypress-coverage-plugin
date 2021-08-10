@@ -6,12 +6,12 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "cy:open": "cypress open -c experimentalInteractiveRunEvents=true",
+    "cy:run":"cypress run",
     "convert": "node ./convert-coverage",
-    "report": "nyc report --reporter=html"
+    "report": "nyc report --reporter=html",
+    "collect":"node ../src/scripts"
   },
   "keywords": [],
-  "author": "Gleb Bahmutov <gleb.bahmutov@gmail.com> (https://glebbahmutov.com/)",
-  "license": "ISC",
   "devDependencies": {
     "chrome-remote-interface": "0.30.1",
     "cypress": "7.1.0",
