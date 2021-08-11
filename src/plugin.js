@@ -90,15 +90,12 @@ const makeFolder = () => {
   //   mkdirp.sync(v8CoverageFolder)
   // }
   if (!fs.existsSync(istanbulCoverageFolder)) {
-    console.log("making folder: %s", istanbulCoverageFolder);
     mkdirp.sync(istanbulCoverageFolder);
   }
 };
 const file_cache = new Map()
 const cachedReadFileSync= (file,...args)=>{
-  console.log("reading cache",file)
   if (!file_cache.has(file)){
-    console.log("not cached ",file)
     file_cache.set(file,fs.readFileSync(file,...args))
   }
   return file_cache.get(file)
@@ -117,7 +114,6 @@ const convertToIstanbul = async (jsFilename, functionsC8coverage ) => {
 
   // const c8coverage = require('./.v8-coverage/coverage.json')
   // const appCoverage = c8coverage.result[0].functions
-  console.log("applying coverage ", jsFilename)
   converter.applyCoverage(functionsC8coverage);
   console.log("applyied coverage",jsFilename)
   // output coverage information in a form that can
