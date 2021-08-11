@@ -24,7 +24,7 @@ const registerHooks = () => {
 if (Cypress.env('V8CodeCoverageRegistered') !== true) {
   // register a hook just to log a message
   before(() => {
-    logMessage(`
+    console.log(`
       ⚠️ V8 Code coverage tasks were not registered by the plugins file.
       You must register using the plugin register command
     `)

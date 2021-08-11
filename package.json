@@ -1,5 +1,5 @@
 {
-  "name": "cypress-v8-chrome",
+  "name": "cypress-coverage-v8",
   "version": "1.0.1",
   "description": "Cypress V8 coverage chrome plugin ",
   "files": [
